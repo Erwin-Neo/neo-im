@@ -5,6 +5,9 @@
     <groupId>org.neo.netty</groupId>
     <artifactId>neo-im</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <modules>
+        <module>im-common</module>
+    </modules>
     <packaging>pom</packaging>
 
     <name>neo-im</name>
