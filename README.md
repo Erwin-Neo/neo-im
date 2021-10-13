@@ -1,2 +1,2 @@
-# neo-im
-A simple instant messaging system 
+# Neo-IM
+A simple instant messaging system. :D
