@@ -8,6 +8,7 @@
     <modules>
         <module>im-common</module>
         <module>im-gateway-api</module>
+        <module>im-server-api</module>
     </modules>
     <packaging>pom</packaging>
 
