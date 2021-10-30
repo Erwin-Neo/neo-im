@@ -28,6 +28,7 @@
         <module>im-server-api</module>
         <module>im-server</module>
         <module>im-gateway</module>
+        <module>im-client</module>
     </modules>
 
     <dependencyManagement>
