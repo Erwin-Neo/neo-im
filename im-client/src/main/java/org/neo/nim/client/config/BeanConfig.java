@@ -39,7 +39,7 @@ public class BeanConfig {
 
 
     /**
-     * 创建心跳单例
+     * Create a heartbeat singleton
      *
      * @return NIMReqMsg
      */
