@@ -1,4 +1,4 @@
-package org.neo.nim.client;
+package org.neo.nim.client.init;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -13,7 +13,7 @@ import org.neo.nim.common.protocol.ObjEncoder;
  * @email : edelweissvx@gmail.com
  * @description :
  */
-public class initNIMClientHandleInitializer extends ChannelInitializer<Channel> {
+public class NIMClientHandleInitializer extends ChannelInitializer<Channel> {
 
 
     @Override
