@@ -1,10 +1,10 @@
 package org.neo.nim.client.service;
 
 import org.neo.nim.client.vo.req.GroupReqVO;
-import org.neo.nim.client.vo.req.LoginReqVO;
-import org.neo.nim.client.vo.req.P2PReqVO;
 import org.neo.nim.client.vo.res.NIMServerResVO;
 import org.neo.nim.client.vo.res.OnlineUsersResVO;
+import org.neo.nim.gateway.api.vo.req.LoginReqVO;
+import org.neo.nim.gateway.api.vo.req.P2PReqVO;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public interface RouteRequest {
      * @return server-ip+port
      * @throws Exception
      */
-    NIMServerResVO.ServerInfo getTIMServer(LoginReqVO loginReqVO) throws Exception;
+    NIMServerResVO.ServerInfo getNIMServer(LoginReqVO loginReqVO) throws Exception;
 
     /**
      * Get all online users

@@ -6,17 +6,20 @@ import okhttp3.Response;
 import org.neo.nim.client.config.AppConfiguration;
 import org.neo.nim.client.service.EchoService;
 import org.neo.nim.client.service.RouteRequest;
+import org.neo.nim.client.thread.ContextHolder;
 import org.neo.nim.client.vo.req.GroupReqVO;
-import org.neo.nim.client.vo.req.LoginReqVO;
-import org.neo.nim.client.vo.req.P2PReqVO;
+import org.neo.nim.common.res.BaseResponse;
+import org.neo.nim.gateway.api.vo.req.P2PReqVO;
 import org.neo.nim.client.vo.res.NIMServerResVO;
 import org.neo.nim.client.vo.res.OnlineUsersResVO;
 import org.neo.nim.common.core.proxy.ProxyManager;
+import org.neo.nim.common.enums.StatusEnum;
+import org.neo.nim.common.exception.TIMException;
 import org.neo.nim.gateway.api.RouteApi;
 import org.neo.nim.gateway.api.vo.req.ChatReqVO;
+import org.neo.nim.gateway.api.vo.req.LoginReqVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -63,11 +66,62 @@ public class RouteRequestImpl implements RouteRequest {
 
     @Override
     public void sendP2PMsg(P2PReqVO p2PReqVO) {
+
+        RouteApi routeApi = new ProxyManager<>(RouteApi.class, gatewayUrl, okHttpClient).getInstance();
+        P2PReqVO vo = new P2PReqVO();
+        vo.setMsg(p2PReqVO.getMsg());
+        vo.setReceiveUserId(p2PReqVO.getReceiveUserId());
+        vo.setUserId(p2PReqVO.getUserId());
+
+        Response response = null;
+        try {
+            response = (Response) routeApi.p2pRoute(vo);
+            String json = response.body().string();
+            BaseResponse baseResponse = JSON.parseObject(json, BaseResponse.class);
+
+            // account offline.
+            if (baseResponse.getCode().equals(StatusEnum.OFF_LINE.getCode())) {
+                LOGGER.error(p2PReqVO.getReceiveUserId() + ":" + StatusEnum.OFF_LINE.getMessage());
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("exception", e);
+        } finally {
+            response.body().close();
+        }
     }
 
     @Override
-    public NIMServerResVO.ServerInfo getTIMServer(LoginReqVO loginReqVO) throws Exception {
-        return null;
+    public NIMServerResVO.ServerInfo getNIMServer(LoginReqVO loginReqVO) throws Exception {
+        RouteApi routeApi = new ProxyManager<>(RouteApi.class, gatewayUrl, okHttpClient).getInstance();
+        LoginReqVO vo = new LoginReqVO();
+        vo.setUserId(loginReqVO.getUserId());
+        vo.setUserName(loginReqVO.getUserName());
+
+        Response response = null;
+        NIMServerResVO NIMServerResVO = null;
+        try {
+            response = (Response) routeApi.login(vo);
+            String json = response.body().string();
+            NIMServerResVO = JSON.parseObject(json, NIMServerResVO.class);
+
+            //repeat failure
+            if (!NIMServerResVO.getCode().equals(StatusEnum.SUCCESS.getCode())) {
+                echoService.echo(NIMServerResVO.getMessage());
+
+                // when client in reConnect state, could not exit.
+                if (ContextHolder.getReconnect()) {
+                    echoService.echo("###{}###", StatusEnum.RECONNECT_FAIL.getMessage());
+                    throw new TIMException(StatusEnum.RECONNECT_FAIL);
+                }
+                System.exit(-1);
+            }
+        } catch (Exception e) {
+            LOGGER.error("exception", e);
+        } finally {
+            response.body().close();
+        }
+        return NIMServerResVO.getDataBody();
     }
 
     @Override
