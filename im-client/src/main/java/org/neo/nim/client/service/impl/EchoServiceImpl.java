@@ -2,6 +2,7 @@ package org.neo.nim.client.service.impl;
 
 import org.neo.nim.client.config.AppConfiguration;
 import org.neo.nim.client.service.EchoService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.time.LocalTime;
  * @email : edelweissvx@gmail.com
  * @description :
  */
+@Service
 public class EchoServiceImpl implements EchoService {
 
     private static final String PREFIX = "$";

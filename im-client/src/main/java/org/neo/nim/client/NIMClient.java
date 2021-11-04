@@ -36,4 +36,16 @@ public class NIMClient {
 
     }
 
+
+    /**
+     * Shutdown
+     *
+     * @throws InterruptedException
+     */
+    public void close() throws InterruptedException {
+        if (channel != null) {
+            channel.close();
+        }
+    }
+
 }
