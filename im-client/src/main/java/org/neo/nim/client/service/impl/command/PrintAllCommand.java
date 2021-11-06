@@ -1,11 +1,10 @@
 package org.neo.nim.client.service.impl.command;
 
 import org.neo.nim.client.service.EchoService;
-import org.neo.nim.client.service.InnerCommand;
+import org.neo.nim.client.command.InnerCommand;
 import org.neo.nim.common.enums.SystemCommandEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

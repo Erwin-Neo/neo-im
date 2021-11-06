@@ -1,4 +1,4 @@
-package org.neo.nim.client.service;
+package org.neo.nim.client.command;
 
 import org.neo.nim.client.service.impl.command.PrintAllCommand;
 import org.neo.nim.client.util.SpringBeanFactory;

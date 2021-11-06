@@ -1,6 +1,8 @@
 package org.neo.nim.client.service.impl;
 
 import org.neo.nim.client.NIMClient;
+import org.neo.nim.client.command.InnerCommand;
+import org.neo.nim.client.command.InnerCommandContext;
 import org.neo.nim.client.common.ClientInfo;
 import org.neo.nim.client.config.AppConfiguration;
 import org.neo.nim.client.service.*;
@@ -9,7 +11,6 @@ import org.neo.nim.client.vo.req.P2PReqVO;
 import org.neo.nim.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
