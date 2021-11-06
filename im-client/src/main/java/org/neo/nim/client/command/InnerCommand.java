@@ -1,4 +1,4 @@
-package org.neo.nim.client.service;
+package org.neo.nim.client.command;
 
 /**
  * @author : Kyle
