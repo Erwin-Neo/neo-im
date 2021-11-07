@@ -1,7 +1,6 @@
-package org.neo.nim.client.service.impl.command;
+package org.neo.nim.client.command;
 
 import org.neo.nim.client.service.EchoService;
-import org.neo.nim.client.command.InnerCommand;
 import org.neo.nim.common.enums.SystemCommandEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
