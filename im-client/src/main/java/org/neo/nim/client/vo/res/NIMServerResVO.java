@@ -72,7 +72,7 @@ public class NIMServerResVO implements Serializable {
             this.ip = ip;
         }
 
-        public Integer getTimServerPort() {
+        public Integer getNimServerPort() {
             return imServerPort;
         }
 

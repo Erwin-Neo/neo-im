@@ -1,9 +1,9 @@
 package org.neo.nim.client.service;
 
 import org.neo.nim.client.vo.req.GroupReqVO;
+import org.neo.nim.client.vo.req.LoginReqVO;
 import org.neo.nim.client.vo.res.NIMServerResVO;
 import org.neo.nim.client.vo.res.OnlineUsersResVO;
-import org.neo.nim.gateway.api.vo.req.LoginReqVO;
 import org.neo.nim.gateway.api.vo.req.P2PReqVO;
 
 import java.util.List;
