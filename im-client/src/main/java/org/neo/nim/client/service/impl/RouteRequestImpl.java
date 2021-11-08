@@ -8,6 +8,7 @@ import org.neo.nim.client.service.EchoService;
 import org.neo.nim.client.service.RouteRequest;
 import org.neo.nim.client.thread.ContextHolder;
 import org.neo.nim.client.vo.req.GroupReqVO;
+import org.neo.nim.client.vo.req.LoginReqVO;
 import org.neo.nim.common.res.BaseResponse;
 import org.neo.nim.gateway.api.vo.req.P2PReqVO;
 import org.neo.nim.client.vo.res.NIMServerResVO;
@@ -17,7 +18,6 @@ import org.neo.nim.common.enums.StatusEnum;
 import org.neo.nim.common.exception.TIMException;
 import org.neo.nim.gateway.api.RouteApi;
 import org.neo.nim.gateway.api.vo.req.ChatReqVO;
-import org.neo.nim.gateway.api.vo.req.LoginReqVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,7 +94,7 @@ public class RouteRequestImpl implements RouteRequest {
     @Override
     public NIMServerResVO.ServerInfo getNIMServer(LoginReqVO loginReqVO) throws Exception {
         RouteApi routeApi = new ProxyManager<>(RouteApi.class, gatewayUrl, okHttpClient).getInstance();
-        LoginReqVO vo = new LoginReqVO();
+        org.neo.nim.gateway.api.vo.req.LoginReqVO vo = new org.neo.nim.gateway.api.vo.req.LoginReqVO();
         vo.setUserId(loginReqVO.getUserId());
         vo.setUserName(loginReqVO.getUserName());
 
