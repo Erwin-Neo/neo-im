@@ -95,7 +95,7 @@ public class NIMClient {
 
         ChannelFuture future = null;
         try {
-            future = bootstrap.connect(imServer.getIp(), imServer.getTimServerPort()).sync();
+            future = bootstrap.connect(imServer.getIp(), imServer.getNimServerPort()).sync();
         } catch (Exception e) {
             errorCount++;
 
@@ -125,7 +125,7 @@ public class NIMClient {
             imServer = routeRequest.getNIMServer(loginReqVO);
 
             //保存系统信息
-            clientInfo.saveServiceInfo(imServer.getIp() + ":" + imServer.getTimServerPort())
+            clientInfo.saveServiceInfo(imServer.getIp() + ":" + imServer.getNimServerPort())
                     .saveUserInfo(userId, userName);
 
             LOGGER.info("timServer=[{}]", imServer.toString());
