@@ -1,6 +1,8 @@
 package org.neo.nim.client;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
@@ -13,7 +15,10 @@ import org.neo.nim.client.config.AppConfiguration;
 import org.neo.nim.client.init.NIMClientHandleInitializer;
 import org.neo.nim.client.service.EchoService;
 import org.neo.nim.client.service.MsgHandle;
+import org.neo.nim.client.service.ReConnectManager;
 import org.neo.nim.client.service.RouteRequest;
+import org.neo.nim.client.thread.ContextHolder;
+import org.neo.nim.client.vo.req.GoogleProtocolVO;
 import org.neo.nim.client.vo.req.LoginReqVO;
 import org.neo.nim.client.vo.res.NIMServerResVO;
 import org.neo.nim.common.constant.Constants;
@@ -63,6 +68,9 @@ public class NIMClient {
     @Resource
     private ClientInfo clientInfo;
 
+    @Resource
+    private ReConnectManager reConnectManager;
+
     /**
      * Retry count
      */
@@ -106,7 +114,7 @@ public class NIMClient {
             LOGGER.error("Connect fail!", e);
         }
         if (future.isSuccess()) {
-            echoService.echo("Start tim client success!");
+            echoService.echo("Start im client success!");
             LOGGER.info("Start up im client successfully");
         }
         channel = (SocketChannel) future.channel();
@@ -124,16 +132,16 @@ public class NIMClient {
         try {
             imServer = routeRequest.getNIMServer(loginReqVO);
 
-            //保存系统信息
+            //Save the system information
             clientInfo.saveServiceInfo(imServer.getIp() + ":" + imServer.getNimServerPort())
                     .saveUserInfo(userId, userName);
 
-            LOGGER.info("timServer=[{}]", imServer.toString());
+            LOGGER.info("imServer=[{}]", imServer.toString());
         } catch (Exception e) {
             errorCount++;
 
             if (errorCount >= configuration.getErrorCount()) {
-                echoService.echo("The maximum number of reconnections has been reached[{}]times, close tim client!", errorCount);
+                echoService.echo("The maximum number of reconnections has been reached[{}]times, close im client!", errorCount);
                 msgHandle.shutdown();
             }
             LOGGER.error("login fail", e);
@@ -152,6 +160,33 @@ public class NIMClient {
         );
     }
 
+    /**
+     * Send message string
+     *
+     * @param msg
+     */
+    public void sendStringMsg(String msg) {
+        ByteBuf message = Unpooled.buffer(msg.getBytes().length);
+        message.writeBytes(msg.getBytes());
+        ChannelFuture future = channel.writeAndFlush(message);
+        future.addListener((ChannelFutureListener) channelFuture ->
+                LOGGER.info("The client manually send message successfully={}", msg));
+
+    }
+
+    /**
+     * Send Google Protocol decoding string
+     *
+     * @param googleProtocolVO
+     */
+    public void sendGoogleProtocolMsg(GoogleProtocolVO googleProtocolVO) {
+        NIMReqMsg protocol = new NIMReqMsg(googleProtocolVO.getRequestId(), googleProtocolVO.getMsg(), Constants.CommandType.MSG);
+        ChannelFuture future = channel.writeAndFlush(protocol);
+        future.addListener((ChannelFutureListener) channelFuture ->
+                LOGGER.info("The client manually send Google Protocol={}", googleProtocolVO.toString()));
+
+    }
+
 
     /**
      * 1. clear route information.
@@ -159,10 +194,19 @@ public class NIMClient {
      * 3. shutdown reconnect job.
      * 4. reset reconnect state.
      */
-    public void reconnect() {
+    public void reconnect() throws Exception {
+        if (channel != null && channel.isActive()) {
+            return;
+        }
+        //Clear the routing information and go offline
+        routeRequest.offLine();
 
+        echoService.echo("im server shutdown, reconnecting....");
+        start();
+        echoService.echo("Great! reConnect success!!!");
+        reConnectManager.reConnectSuccess();
+        ContextHolder.clear();
     }
-
 
     /**
      * Shutdown
